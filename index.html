@@ -1,13 +1,127 @@
-<!DOCTYPE html>
+<!doctype html>
+<!doctype html>
 <html lang="en">
-  <head>
-    
-  </head>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NVDA Max-Profit Analyzer: CPS 3440 Algorithm Project</title>
+<meta name="description" content="Three algorithms, one question: when was the best time to buy and sell NVIDIA? Benchmarked on 25 years of real data.">
 
-  <body>
+</head>
+<body>
 
-    <header>
-      <h1>Historical Stock Market Algorithm Analyzer</h1>
-    </header>
-    
-  </body>
+<nav aria-label="Sections"><div class="wrap">
+  <a href="#home">Home</a><a href="#problem">Problem</a><a href="#dataset">Dataset</a><a href="#solution">Solution</a>
+  <a href="#algorithms">Algorithms</a><a href="#complexity">Complexity</a><a href="#results">Results</a>
+  <a href="#demo">Demo</a><a href="#tech">Technologies</a><a href="#team">Team</a><a href="#resources">Resources</a>
+</div></nav>
+
+<header class="hero" id="home"><div class="wrap">
+  <h1>When was the best time to buy and sell NVIDIA?</h1>
+  <p class="lead">We answer it three ways, from a slow O(n²) search to a single O(n) pass, and measure how much the difference matters as the data grows. This is analysis of past prices, not prediction.</p>
+
+  <div class="demo" id="demo">
+    <div class="controls">
+      <label for="n">Days of prices: <output id="nOut">250</output></label>
+      <input id="n" type="range" min="30" max="2000" step="10" value="250">
+      <button id="reroll" type="button">New sample</button>
+    </div>
+    <svg id="chart" viewBox="0 0 900 300" role="img" aria-label="Price line with the best buy and sell window highlighted"></svg>
+    <div class="answer" id="answer" aria-live="polite"></div>
+    <div class="scroll"><table>
+      <thead><tr><th>Algorithm</th><th>Steps for this input</th><th>Relative size (log scale)</th></tr></thead>
+      <tbody id="ops"></tbody>
+    </table></div>
+    <p class="note">Demo uses simulated prices so it runs in your browser. Final results below come from real NVDA data.</p>
+  </div>
+</div></header>
+
+<section id="problem"><div class="wrap">
+  <h2>The problem</h2>
+  <p>Given a list of daily prices, which single buy day and later sell day would have made the most money? Investors, analysts, and risk teams ask versions of this question constantly, and the data gets huge quickly.</p>
+  <p>The same problem is a classic: it reduces to finding the maximum subarray of daily price changes. We also summarize how daily returns are distributed.</p>
+</div></section>
+
+<section id="dataset"><div class="wrap">
+  <h2>Dataset</h2>
+  <dl>
+    <dt>Source</dt><dd><a href="https://www.kaggle.com/datasets/acarmehmet/nvidia-historical-stock-data">Nvidia Historical Stock Data on Kaggle</a></dd>
+    <dt>What it is</dt><dd>Daily NVIDIA (NVDA) prices covering about 25 years.</dd>
+    <dt>Rows</dt><dd>TODO: exact count</dd>
+    <dt>Fields used</dt><dd>TODO: date, close (and others we use)</dd>
+    <dt>Cleaning</dt><dd>TODO: missing days, bad rows, how we handled them</dd>
+    <dt>Larger test sizes</dt><dd>TODO: how we reached 100,000 and 1,000,000 rows</dd>
+    <dt>License</dt><dd>TODO: copy from the Kaggle page</dd>
+  </dl>
+</div></section>
+
+<section id="solution"><div class="wrap">
+  <h2>Our solution</h2>
+  <p>A Python tool that loads the price history, runs each algorithm on the same input, and reports the buy day, sell day, and profit. A benchmark script times every algorithm at growing input sizes, and a small app lets you try it yourself.</p>
+  <p>All three algorithms return the same answer, and our tests check that they agree.</p>
+</div></section>
+
+<section id="algorithms"><div class="wrap">
+  <h2>Algorithms</h2>
+  <div class="algo"><h3>Brute force (baseline)</h3><p>Try every buy day and every later sell day and keep the best. Simple and obviously correct, which makes it the reference for our tests.</p></div>
+  <div class="algo"><h3>Divide and conquer (efficient)</h3><p>Split the price changes in half. The best window is in the left half, the right half, or crosses the middle. Solve each side recursively and combine.</p></div>
+  <div class="algo"><h3>Kadane's linear scan (optimized)</h3><p>Walk through the data once, tracking the best window ending at each day. One pass, constant extra memory.</p></div>
+</div></section>
+
+<section id="complexity"><div class="wrap">
+  <h2>Complexity</h2>
+  <div class="scroll"><table>
+    <thead><tr><th>Algorithm</th><th>Time</th><th>Extra space</th></tr></thead>
+    <tbody>
+      <tr><td>Brute force</td><td class="num">O(n²)</td><td class="num">O(1)</td></tr>
+      <tr><td>Divide and conquer</td><td class="num">O(n log n)</td><td class="num">O(log n)</td></tr>
+      <tr><td>Kadane</td><td class="num">O(n)</td><td class="num">O(1)</td></tr>
+    </tbody>
+  </table></div>
+  <p>The slow version is a poor algorithm choice, not a hard problem. The problem itself is easy, since one pass solves it. A harder related version, maximum profit with k transactions, needs dynamic programming.</p>
+</div></section>
+
+<section id="results"><div class="wrap">
+  <h2>Results</h2>
+  <p>Median runtime in seconds over repeated trials. We fill this in from <code>results/</code> once benchmarks finish.</p>
+  <div class="scroll"><table>
+    <thead><tr><th>Input size</th><th>Brute force</th><th>Divide and conquer</th><th>Kadane</th></tr></thead>
+    <tbody>
+      <tr><td>1,000</td><td>pending</td><td>pending</td><td>pending</td></tr>
+      <tr><td>10,000</td><td>pending</td><td>pending</td><td>pending</td></tr>
+      <tr><td>100,000</td><td>pending</td><td>pending</td><td>pending</td></tr>
+      <tr><td>1,000,000</td><td>pending</td><td>pending</td><td>pending</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">Add the runtime chart from <code>figures/</code> here: <code>&lt;img src="figures/runtime.png" alt="Runtime vs input size"&gt;</code></p>
+  <p>Did measurements match theory? TODO: summarize after benchmarking.</p>
+</div></section>
+
+<section id="tech"><div class="wrap">
+  <h2>Technologies</h2>
+  <p>Python for all algorithms, pandas for loading data, matplotlib for charts, pytest for tests, GitHub and GitHub Pages for hosting. Update this list to match what we actually used.</p>
+</div></section>
+
+<section id="team"><div class="wrap">
+  <h2>Team</h2>
+  <dl>
+    <dt>Name 1</dt><dd>Data loading, cleaning, and dataset documentation</dd>
+    <dt>Name 2</dt><dd>Brute force algorithm and tests</dd>
+    <dt>Name 3</dt><dd>Divide-and-conquer algorithm and tests</dd>
+    <dt>Name 4</dt><dd>Kadane algorithm and tests</dd>
+    <dt>NEndy Hernandez</dt><dd>Benchmarks, charts, and this website</dd>
+  </dl>
+  <p class="note">Replace with real names and the contributions listed in CONTRIBUTIONS.md.</p>
+</div></section>
+
+<section id="resources"><div class="wrap">
+  <h2>Resources</h2>
+  <p><a href="https://github.com/YOUR-ORG/CPS3440-Project">GitHub repository</a><br>
+  <a href="docs/paper.pdf">Technical paper</a><br>
+  <a href="presentation/slides.pdf">Presentation slides</a></p>
+</div></section>
+
+<footer><div class="wrap">CPS 3440, Analysis of Algorithms, Fall 2026, Kean University.</div></footer>
+
+</body>
+</html>
