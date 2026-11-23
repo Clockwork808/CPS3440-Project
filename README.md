@@ -94,4 +94,4 @@ TODO: add the link once Pages is published.
 TODO: link to the paper in `docs/`
 
 ## 14. Presentation
-TODO: link to the slides in `presentation/` (if shared publicly)
+(https://docs.google.com/presentation/d/1rM4b4HYKq6ne0tCXuWrXCAXHIAWELuxF/edit?slide=id.p1#slide=id.p1)
